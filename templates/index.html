@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #363636;
+            width: 100vh;
+        }
+
+        .loader {
+            width: 80px;
+            height: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #36363600;
+        }
+
+        .loader-text {
+            position: absolute;
+            top: 0;
+            padding: 0;
+            margin: 0;
+            color: #C8B6FF;
+            animation: text_713 3.5s ease both infinite;
+            font-size: .8rem;
+            letter-spacing: 1px;
+        }
+
+        .load {
+            background-color: #9A79FF;
+            border-radius: 50px;
+            display: block;
+            height: 16px;
+            width: 16px;
+            bottom: 0;
+            position: absolute;
+            transform: translateX(64px);
+            animation: loading_713 3.5s ease both infinite;
+        }
+
+        .load::before {
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 100%;
+            background-color: #D1C2FF;
+            border-radius: inherit;
+            animation: loading2_713 3.5s ease both infinite;
+        }
+
+        @keyframes text_713 {
+            0% {
+                letter-spacing: 1px;
+                transform: translateX(0px);
+            }
+
+            40% {
+                letter-spacing: 2px;
+                transform: translateX(26px);
+            }
+
+            80% {
+                letter-spacing: 1px;
+                transform: translateX(32px);
+            }
+
+            90% {
+                letter-spacing: 2px;
+                transform: translateX(0px);
+            }
+
+            100% {
+                letter-spacing: 1px;
+                transform: translateX(0px);
+            }
+        }
+
+        @keyframes loading_713 {
+            0% {
+                width: 16px;
+                transform: translateX(0px);
+            }
+
+            40% {
+                width: 100%;
+                transform: translateX(0px);
+            }
+
+            80% {
+                width: 16px;
+                transform: translateX(64px);
+            }
+
+            90% {
+                width: 100%;
+                transform: translateX(0px);
+            }
+
+            100% {
+                width: 16px;
+                transform: translateX(0px);
+            }
+        }
+
+        @keyframes loading2_713 {
+            0% {
+                transform: translateX(0px);
+                width: 16px;
+            }
+
+            40% {
+                transform: translateX(0%);
+                width: 80%;
+            }
+
+            80% {
+                width: 100%;
+                transform: translateX(0px);
+            }
+
+            90% {
+                width: 80%;
+                transform: translateX(15px);
+            }
+
+            100% {
+                transform: translateX(0px);
+                width: 16px;
+            }
+        }
+
+        .container,
+        h1,
+        img,
+        h2,
+        pre,
+        p {
+            display: none;
+            color: white;
+        }
+
+        #sendButton {
+            display: flex;
+            align-items: center;
+            left: 21vh;
+            position: relative;
+            top: -4vh;
+            font-family: inherit;
+            font-weight: 100;
+            font-size: 14px;
+            padding: 0.8em 1.1em 0.8em 1.1em;
+            color: white;
+            background: #ad5389;
+            background: linear-gradient(0deg, rgba(77, 54, 208, 1) 0%, rgba(132, 116, 254, 1) 100%);
+            border: none;
+            box-shadow: 0 0.7em 1.5em -0.5em #4d36d0be;
+            letter-spacing: 0.05em;
+            border-radius: 15em;
+        }
+
+        #sendButton:hover {
+            background: linear-gradient(0deg, rgb(28, 20, 75) 0%, rgb(64, 54, 141) 100%);
+            box-shadow: 0 0.5em 1.5em -0.5em #4d36d0be;
+        }
+
+        #sendButton:active {
+            box-shadow: 0 0.3em 1em -0.5em #4d36d0be;
+        }
+
+        #searchInput {
+            border: none;
+            outline: none;
+            border-radius: 15px;
+            padding: 1em;
+            background-color: #ccc;
+            box-shadow: inset 2px 5px 10px rgba(0, 0, 0, 0.3);
+            transition: 300ms ease-in-out;
+            color: black;
+        }
+
+        #searchInput:focus {
+            background-color: white;
+            transform: scale(1.05);
+            box-shadow: 13px 13px 100px #969696,
+                -13px -13px 100px #ffffff;
+            color: black;
+        }
+
+        h1 {
+            font-family: Arial, sans-serif;
+            font-size: 55px;
+        }
+
+        h2 {
+            font-family: Arial, sans-serif;
+            font-size: 40px;
+        }
+
+        h3 {
+            font-family: Arial, sans-serif;
+            font-size: 40px;
+        }
+
+        .p1 {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
+
+        .bgblue {
+            background: linear-gradient(135deg, #fffffff5, #3a4b8a, #ffffff98);
+            border-radius: 1.2rem;
+            box-shadow: 0px 1rem 1.5rem -0.9rem #000000e1;
+            max-width: 1000px;
+            position: relative;
+            left: 400px;
+            top: 110px;
+        }
+
+        .card {
+            font-size: 1rem;
+            color: #bec4cf;
+            background: linear-gradient(135deg, #0d1120 0%, #3a4b8a 43%, #0d1120 100%);
+            white-space: pre-wrap;
+            padding: 1.5rem;
+            border-radius: 1.2rem;
+            word-wrap: break-word;
+        }
+
+        li {
+            list-style: none;
+            /* Remove default list styling */
+            margin: 0;
+            /* Remove any default margin */
+            padding: 0;
+            /* Remove any default padding */
+        }
+
+        a {
+            text-decoration: none;
+            /* Remove underline */
+            color: #ff1e00;
+            /* Set text color */
+            font-family: Arial, sans-serif;
+            /* Set font */
+            font-size: 16px;
+            /* Set font size */
+        }
+
+        a:hover {
+            color: #2e0909;
+            /* Change color on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loader">
+        <span class="loader-text">Can take 20-60</span>
+        <span class="load"></span>
+    </div>
+
+    <div class="container">
+        <div class="search-container" style="position: absolute; left: 70vh;">
+            <input type="text" id="searchInput" placeholder="Enter your search query">
+            <button id="sendButton">Send</button>
+            <div id="suggestions"></div>
+        </div>
+    </div>
+
+    <h1 id="texttitle" style="color: white; position: relative; left: 400px; top:150px;">?????</h1>
+    <img id="petImage" style="position: relative; top: 55px; left: 1240px;" src="x" alt="Image">
+    <div class="bgblue">
+        <pre class="card" id="textOverview">
+
+        </pre>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/update_data',
+                type: 'POST',
+                success: function (response) {
+                    console.log('Texts updated successfully');
+                    $('.loader').hide();
+                    $('.container, h1, img, h2, pre, p').show();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error updating texts:', error);
+                    $('.loader').hide();
+                }
+            });
+        });
+
+        $('#searchInput').on('input', function () {
+            var partialQuery = $(this).val();
+            if (partialQuery !== '') {
+                $.ajax({
+                    url: '/suggest',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ 'partial_query': partialQuery }),
+                    success: function (response) {
+                        var suggestions = response.suggestions;
+                        var suggestionList = '';
+                        suggestions.forEach(function (suggestion) {
+                            suggestionList += '<div class="suggestion">' + suggestion + '</div>';
+                        });
+                        $('#suggestions').html(suggestionList);
+                    }
+                });
+            } else {
+                $('#suggestions').empty();
+            }
+        });
+
+        $(document).on('click', '#sendButton', function () {
+            var suggestionText = $('#searchInput').val();
+            $('#sendButton').hide();
+            $('#searchInput').hide();
+            $('.loader').show();
+            $.ajax({
+                url: '/update_texts',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 'suggestionText': suggestionText }),
+                success: function (response) {
+                    $('#texttitle').text(response.texttitle);
+                    $('#textOverview').html(response.textOverview);
+                    $('#petImage').attr('src', response.petImage);
+                    $('.loader').hide();
+                    $('#sendButton').show();
+                    $('#searchInput').show();
+                }
+            });
+        });
+
+        $(document).on('click', '.suggestion', function () {
+            var suggestionText = $(this).text();
+            $('#searchInput').val(suggestionText);
+            $('#suggestions').empty();
+        });
+    </script>
+</body>
+
+</html>
